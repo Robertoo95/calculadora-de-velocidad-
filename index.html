@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b5d2a"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Roberto’s Pumping Crew</title>
+<style>
+body{margin:0;background:#f2f6f1;font-family:-apple-system,BlinkMacSystemFont,Arial;color:#172019}
+header{background:#063d1c;color:white;padding:16px;text-align:center}header h2{margin:4px 0;color:#ffd800}
+main{max-width:520px;margin:auto;padding:15px 12px 80px}.card{background:white;padding:17px;border-radius:18px;margin-bottom:14px;box-shadow:0 3px 12px #0001}
+h1{color:#063d1c;margin-top:0}label{display:block;font-weight:bold;margin:14px 0 6px}
+input{width:100%;padding:13px;box-sizing:border-box;border:2px solid #d5e1d3;border-radius:12px;font-size:18px}
+.row{display:flex;gap:8px}.row input{flex:1}.row button{border:0;border-radius:10px;padding:0 12px;font-weight:bold}.on{background:#ffd800}
+.result{text-align:center;background:#ffd800;padding:16px;border-radius:17px;margin-top:15px}.mph{font-size:52px;font-weight:900}.kmh{font-weight:bold}
+button.action{width:100%;border:0;border-radius:12px;padding:14px;margin-top:11px;background:#0b5d2a;color:white;font-size:17px;font-weight:bold}
+.formula{background:#eef4ec;padding:10px;border-radius:9px;margin-top:12px;font-size:12px}
+table{width:100%;border-collapse:collapse}th{background:#0b5d2a;color:white;padding:8px}td{text-align:center;padding:8px;border-bottom:1px solid #ddd}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #ddd;display:flex}nav button{flex:1;border:0;background:white;padding:12px;font-weight:bold}
+.hidden{display:none}.saved{padding:10px;border:1px solid #ddd;border-radius:10px;margin-top:8px}
+</style></head><body>
+<header><div>🟡🌱</div><h2>Roberto’s Pumping Crew</h2><small>Manure Application Calculator</small></header>
+<main>
+<section id="calc"><div class="card">
+<h1>Calculadora de Velocidad</h1>
+<label>GPM total</label><input id="gpm" type="number" value="2500">
+<label>Ancho de barra</label><div class="row"><input id="width" type="number" value="48"><button id="ft" class="on" onclick="unit('ft')">Pies</button><button id="inch" onclick="unit('in')">In</button></div>
+<label>GPA deseado</label><input id="gpa" type="number" value="6000">
+<div class="result"><div>VELOCIDAD</div><div class="mph" id="mph">4.30</div><div id="kmh">6.91 km/h</div></div>
+<button class="action" onclick="calc()">Calcular</button>
+<button class="action" style="background:#ffd800;color:#172000" onclick="save()">Guardar configuración</button>
+<div class="formula" id="formula"></div></div>
+<div class="card"><b>Fórmula</b><p>En pies: GPM × 495 ÷ ancho(ft) ÷ GPA.<br>En pulgadas: GPM × 5940 ÷ ancho(in) ÷ GPA.</p></div></section>
+<section id="table" class="hidden"><div class="card"><h1>Tabla GPA → MPH</h1><table><thead><tr><th>GPA</th><th>MPH</th><th>km/h</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
+<section id="saved" class="hidden"><div class="card"><h1>Guardadas</h1><div id="list"></div></div></section>
+</main><nav><button onclick="show('calc',this)">⌂<br>Calcular</button><button onclick="show('table',this)">▥<br>Tabla</button><button onclick="show('saved',this)">★<br>Guardadas</button></nav>
+<script>
+let u='ft';const $=x=>document.getElementById(x);
+function sp(g,w,a,unit=u){return g*(unit==='ft'?495:5940)/(w*a)}
+function unit(x){let w=+$('width').value;if(w)$('width').value=x==='in'?(w*12).toFixed(0):(w/12).toFixed(2);u=x;calc()}
+function calc(){let g=+$('gpm').value,w=+$('width').value,a=+$('gpa').value,v=sp(g,w,a);$('mph').textContent=v.toFixed(2);$('kmh').textContent=(v*1.609344).toFixed(2)+' km/h';$('formula').textContent=`MPH = (${g} × ${u==='ft'?495:5940}) ÷ ${w} ${u} ÷ ${a} GPA = ${v.toFixed(2)} MPH`;let s='';for(let x=4000;x<=10000;x+=500){let q=sp(g,w,x);s+=`<tr><td>${x}</td><td>${q.toFixed(2)}</td><td>${(q*1.609344).toFixed(2)}</td></tr>`}$('tbody').innerHTML=s}
+function save(){let n=prompt('Nombre:');if(!n)return;let a=JSON.parse(localStorage.rpc||'[]');a.push({n,g:+$('gpm').value,w:+$('width').value,a:+$('gpa').value,u});localStorage.rpc=JSON.stringify(a);list();alert('Guardada')}
+function list(){let a=JSON.parse(localStorage.rpc||'[]');$('list').innerHTML=a.length?a.map((x,i)=>`<div class="saved"><b>${x.n}</b><br>${x.g} GPM · ${x.w} ${x.u} · ${x.a} GPA · ${sp(x.g,x.w,x.a,x.u).toFixed(2)} MPH <button onclick="del(${i})">Borrar</button></div>`).join(''):'No hay configuraciones guardadas.'}
+function del(i){let a=JSON.parse(localStorage.rpc||'[]');a.splice(i,1);localStorage.rpc=JSON.stringify(a);list()}
+function show(id,b){['calc','table','saved'].forEach(x=>$(x).classList.toggle('hidden',x!==id));if(id==='table')calc();if(id==='saved')list()}
+['gpm','width','gpa'].forEach(x=>$(x).oninput=calc);calc();list();
+</script></body></html>
