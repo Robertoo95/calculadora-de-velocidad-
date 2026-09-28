@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora MPH - Aplicador de Estiércol</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;background:#f3f4f6;margin:0;padding:16px;color:#1f2937}
+.card{max-width:480px;margin:0 auto;background:white;border-radius:16px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:#6b7280;font-size:14px;margin-bottom:16px}
+label{font-size:13px;font-weight:600;display:block;margin:12px 0 4px}
+input{width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;box-sizing:border-box}
+.result{background:#166534;color:white;border-radius:12px;padding:16px;margin-top:16px;text-align:center}
+.result .mph{font-size:42px;font-weight:800}
+.btn{width:100%;background:#16a34a;color:white;border:0;padding:12px;border-radius:10px;font-size:16px;margin-top:12px;font-weight:700}
+.small{font-size:12px;color:#6b7280;margin-top:12px;text-align:center}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;padding:10px;border-radius:10px;border:2px solid #e5e7eb;background:#f9fafb;font-size:13px;font-weight:700;cursor:pointer;text-align:center}
+.tab.active{background:#166534;color:white;border-color:#166534}
+.section{display:none}.section.active{display:block}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>🚜 Calculadora MPH Aplicador</h1>
+<div class="sub">Tractor aplicador de estiércol</div>
+
+<div class="tabs">
+<div class="tab active" onclick="showTab(0)">MPH requerida</div>
+<div class="tab" onclick="showTab(1)">GPA real</div>
+<div class="tab" onclick="showTab(2)">MPH distancia</div>
+</div>
+
+<div class="section active" id="s0">
+<label>Target Rate (galones por acre GPA)</label>
+<input id="gpa" type="number" value="7000" oninput="calc1()">
+<label>Caudal (galones por minuto GPM)</label>
+<input id="gpm" type="number" value="2500" oninput="calc1()">
+<label>Ancho de barra (pies)</label>
+<input id="ancho" type="number" value="28" oninput="calc1()">
+<div class="result"><div>Velocidad requerida</div><div class="mph" id="mph1">6.31</div><div>MPH | <span id="kmh1">10.16</span> km/h</div></div>
+<div class="small">Fórmula: MPH = (GPM × 495) ÷ (GPA × Ancho)</div>
+</div>
+
+<div class="section" id="s1">
+<label>Caudal GPM</label><input id="gpm2" type="number" value="2500" oninput="calc2()">
+<label>Ancho (pies)</label><input id="ancho2" type="number" value="28" oninput="calc2()">
+<label>Velocidad actual MPH</label><input id="mph2" type="number" value="6.31" oninput="calc2()">
+<div class="result"><div>Dosis aplicada</div><div class="mph" id="gpa2">7000</div><div>GPA</div></div>
+</div>
+
+<div class="section" id="s2">
+<label>Distancia (pies)</label><input id="dist" type="number" value="200" oninput="calc3()">
+<label>Tiempo (segundos)</label><input id="tiempo" type="number" value="21.5" oninput="calc3()">
+<div class="result"><div>Velocidad real</div><div class="mph" id="mph3">6.34</div><div>MPH</div></div>
+<div class="small">MPH = (Pies ÷ Segundos) × 0.6818</div>
+</div>
+
+</div>
+<script>
+function showTab(i){
+ document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+ document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',j===i));
+}
+function calc1(){
+ let gpa=parseFloat(document.getElementById('gpa').value)||0;
+ let gpm=parseFloat(document.getElementById('gpm').value)||0;
+ let a=parseFloat(document.getElementById('ancho').value)||0;
+ if(gpa>0&&a>0){let mph=(gpm*495)/(gpa*a);document.getElementById('mph1').textContent=mph.toFixed(2);document.getElementById('kmh1').textContent=(mph*1.60934).toFixed(2);}
+}
+function calc2(){
+ let gpm=parseFloat(document.getElementById('gpm2').value)||0;
+ let a=parseFloat(document.getElementById('ancho2').value)||0;
+ let mph=parseFloat(document.getElementById('mph2').value)||0;
+ if(mph>0&&a>0){let gpa=(gpm*495)/(mph*a);document.getElementById('gpa2').textContent=gpa.toFixed(0);}
+}
+function calc3(){
+ let d=parseFloat(document.getElementById('dist').value)||0;
+ let t=parseFloat(document.getElementById('tiempo').value)||0;
+ if(t>0){let mph=(d/t)*0.681818;document.getElementById('mph3').textContent=mph.toFixed(2);}
+}
+calc1();calc2();calc3();
+</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
